@@ -25,22 +25,24 @@ var c = new Crawler({
     // rateLimit: 10,
     // This will be called for each crawled page
     callback : function (error, res, done) {      
+        let uri = res.options.uri
+        console.log(new Date(),"Response Recieved:", uri);
+        const id = uri.split('/');
+
         if(error){
-            console.log('in error :D:D:D:D');
             mongo.then(db=>{
               var dbo = db.db("nlai");
+              let book = {};
+              book._id=id[id.length-1];
               dbo.collection("losts").insertOne(book, function(err, res) {
                 // if (err) throw err;
-                console.log(new Date(),'book inserted :', uri);
+                console.log(new Date(),'book error :', uri);
                 // db.close();
               });
             });
             // console.log(error);
         }else{
             var $ = res.$;
-            let uri = res.options.uri
-            console.log(new Date(),"Response Recieved:", uri);
-            const id = uri.split('/');
             // console.log('id :', id[id.length-1]);
             // $ is Cheerio by default
             //a lean implementation of core jQuery designed specifically for the server
@@ -92,10 +94,10 @@ var c = new Crawler({
 tasks = [];
 
 // c.queue('http://opac.nlai.ir/opac-prod/bibliographic/60000000');
-for (let i = 0; i < 10; i++) {
-  tasks[i] = `http://opac.nlai.ir/opac-prod/bibliographic/${i}`
+const j = 950000;
+for (let i = 0; i < 1; i++) {
+  tasks[i] = `http://opac.nlai.ir/opac-prod/bibliographic/${i+j}`
   // tasks[i] = `http://localhost:15000/${i}`
-  
 }
 c.queue(tasks);
 
